@@ -1,61 +1,33 @@
 #include "sort.h"
-#include <stdio.h>
-void swap(listint_t **head, listint_t *mv_back, listint_t *mv_forw);
 /**
- * insertion_sort_list - sort a list using insertion sort
- * @list: list to sort
- * Description: Function to sort a doubly linked list using
- * the insertion sort algorithm
+ * insertion_sort_list - a funcrtion that sorts doubly linked list
+ * @list: address to the head of the list
+ *
+ * Return: NULL
  */
-
 void insertion_sort_list(listint_t **list)
 {
-	listint_t *temp, *next, *current = (*list)->next;
-
-	if (list == NULL || *list == NULL)
+	listint_t *temp;
+	if(*list == NULL)
 		return;
-
-	while (current != NULL)
+	temp = (*list)->next;
+	while(temp)
 	{
-		next = current->next;
-		if (current->n < current->prev->n)
+		while(temp->prev && (temp->n < temp->prev->n))
 		{
-			temp = current;
-			while (temp->prev != NULL && temp->n < temp->prev->n)
-			{
-				swap(list, temp, temp->prev);
-				print_list(*list);
-			}
+			temp->prev->next = temp->next;
+			if(temp->next)
+				temp->next->prev =temp->prev;
+			temp->next = temp->prev;
+			temp->prev = temp->prev->prev;
+			temp->next->prev = temp;
+
+			if(temp->prev == NULL)
+				*list = temp;
+			else
+				temp->prev->next = temp;
+			print_list(*list);
 		}
-
-		current = next;
+		temp = temp->next;
 	}
-}
-
-/**
- * swap - swap two nodes in a dll
- * @head: head of dll to swap in
- * @mv_back: node to move backwards
- * @mv_forw: node to move forward
- * Description: Function to swap the pointer positions
- * of two nodes in a doubly linked list
- */
-
-void swap(listint_t **head, listint_t *mv_back, listint_t *mv_forw)
-{
-	listint_t *back_prev, *forw_next;
-
-	back_prev = mv_forw->prev;
-	forw_next = mv_back->next;
-
-	if (back_prev != NULL)
-		back_prev->next = mv_back;
-	else
-		*head = mv_back;
-	mv_forw->prev = mv_back;
-	mv_forw->next = forw_next;
-	mv_back->prev = back_prev;
-	mv_back->next = mv_forw;
-	if (forw_next)
-		forw_next->prev = mv_forw;
 }
